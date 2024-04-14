@@ -1,55 +1,59 @@
-export const revalidate = 604800;
-
-
-import notFound from "../not-found";
-import { titleFont } from "@/config/font";
-import { ProductMobileSlideShow, ProductSlideShow, QuantitySelector, SizeSelector, StockLabel } from "@/components";
-import { getProductBySlug } from "@/actions";
+export const revalidate = 604800; //7 días
 import { Metadata, ResolvingMetadata } from "next";
-import { AddToCart } from "./ui/AddToCart";
 
+import { notFound } from "next/navigation";
+
+import { titleFont } from "@/config/font";
+import {
+  ProductMobileSlideShow,
+  ProductSlideShow,
+  StockLabel,
+} from "@/components";
+
+import { AddToCart } from "./ui/AddToCart";
+import { getProductBySlug } from "@/actions";
 
 interface Props {
-  params:{
-    slug:string;
-  }
+  params: {
+    slug: string;
+  };
 }
-
-
 
 export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   // read route params
-  const slug = params.slug
- 
+  const slug = params.slug;
+
   // fetch data
-  const product = await getProductBySlug(slug)
- 
+  const product = await getProductBySlug(slug);
+
   // optionally access and extend (rather than replace) parent metadata
   // const previousImages = (await parent).openGraph?.images || []
- 
+console.log(`/products/${ product?.images[1] }`)
   return {
-    title: (product?.title ?? 'Product no encontrado'),
-    description:product?.description ?? '',
+    title: product?.title ?? "Producto no encontrado",
+    description: product?.description ?? "",
     openGraph: {
-      title: product?.title,
-      description:product?.description ?? '',
-      images: [`/products/${product?.images[1]}`],
+      title: product?.title ?? "Producto no encontrado",
+      description: product?.description ?? "",
+      // images: [], // https://misitioweb.com/products/image.png
+      images: [ `/products/${ product?.images[1] }`],
     },
-  }
+  };
 }
+
+
+
 
 
 
 export default async function ProductPage({params}:Props) {
 
   const {slug} = params;
-  // const product = initialData.products.find(product => product.slug === slug);
-  const product = await getProductBySlug(slug);
 
-  console.log(product)
+  const product = await getProductBySlug(slug);
 
   if(!product){
     notFound();
