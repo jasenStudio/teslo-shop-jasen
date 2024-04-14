@@ -30,17 +30,31 @@ export async function generateMetadata(
   const product = await getProductBySlug(slug);
 
   // optionally access and extend (rather than replace) parent metadata
-  // const previousImages = (await parent).openGraph?.images || []
-console.log(`/products/${ product?.images[1] }`)
+  const previousImages = (await parent).openGraph?.images || []
+
   return {
     title: product?.title ?? "Producto no encontrado",
     description: product?.description ?? "",
+
     openGraph: {
       title: product?.title ?? "Producto no encontrado",
       description: product?.description ?? "",
       // images: [], // https://misitioweb.com/products/image.png
       images: [ `/products/${ product?.images[1] }`],
+      
     },
+    twitter:{
+      title: product?.title ?? "Producto no encontrado",
+      description: product?.description ?? "",
+      // images: [], // https://misitioweb.com/products/image.png
+      images: [
+        {
+          url: `/products/${ product?.images[1] }`, // Dynamic og route
+          width: 200,
+          height: 200,
+        },
+    ]
+  }
   };
 }
 
